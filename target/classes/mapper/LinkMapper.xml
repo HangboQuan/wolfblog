@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.ILinkDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.Link">
+        <id property="linkId" column="link_id" jdbcType="INTEGER"/>
+        <result property="linkUrl" column="link_url" jdbcType="VARCHAR"/>
+        <result property="linkName" column="link_name" jdbcType="VARCHAR"/>
+        <result property="linkImage" column="link_image" jdbcType="VARCHAR"/>
+        <result property="linkDescription" column="link_description" jdbcType="VARCHAR"/>
+        <result property="linkOwnerNickname" column="link_owner_nickname" jdbcType="VARCHAR"/>
+        <result property="linkOwnerContact" column="link_owner_contact" jdbcType="VARCHAR"/>
+        <result property="linkCreateTime" column="link_create_time" jdbcType="TIMESTAMP"/>
+        <result property="linkUpdateTime" column="link_update_time" jdbcType="TIMESTAMP"/>
+        <result property="linkOrder" column="link_order" jdbcType="INTEGER"/>
+        <result property="linkStatus" column="link_status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="tb">link</sql>
+
+    <sql id = "Base_Column_List">
+        link_id,link_url,link_name,link_image,link_description,link_owner_nickname,link_owner_contact,link_create_time,link_update_time,link_order,link_status
+    </sql>
+
+    <insert id="insert" parameterType="com.tencent.entity.Link" keyProperty="linkId" useGeneratedKeys="true">
+        insert into <include refid="tb"/> (link_url,link_name,link_image,link_description,link_owner_nickname,link_owner_contact,link_create_time,link_update_time,link_order,link_status)
+        values(#{linkUrl},#{linkName},#{linkImage},#{linkDescription},#{linkOwnerNickname},#{linkOwnerContact},#{linkCreateTime},#{linkUpdateTime},#{linkOrder},#{linkStatus})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.entity.Link">
+        update link
+        <set>
+            <if test="linkUrl!=null">link_url=#{linkUrl},</if>
+            <if test="linkName!=null">link_name=#{linkName},</if>
+            <if test="linkImage!=null">link_image=#{linkImage},</if>
+            <if test="linkDescription!=null">link_desrciption=#{linkDescription},</if>
+            <if test="linkOwnerNickname!=null">link_owner_nickname=#{linkOwnerNickname},</if>
+            <if test="linkOwnerContact!=null">link_owner_contact=#{linkOwnerContact},</if>
+            <if test="linkOrder!=null">link_order=#{linkOrder},</if>
+            <if test="linkStatus!=null">link_status=#{linkStatus}</if>
+        </set>
+        where link_id = #{linkId}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from <include refid="tb"/> where link_id = #{linkId}
+    </delete>
+
+    <select id="getLinkById" parameterType="Integer" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> where link_id = #{linkId}
+    </select>
+
+    <select id="countLink" resultType="Integer">
+        select count(*) from <include refid="tb"/>
+        <where>
+            <if test="status!=null">link_status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="listLink" resultType="com.tencent.entity.Link">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        <where>
+            <if test="status!=null">link_status=#{status}</if>
+        </where>
+        order by link_status asc,link_order desc,link_id asc
+    </select>
+</mapper>

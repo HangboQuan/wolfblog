@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.IArticleDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.Article">
+        <!--这里是处理数据库字段和Java对象的映射关系,注意property中写java对象的属性，column中写的是数据库中的属性-->
+        <id property="articleId" column="article_id" jdbcType="INTEGER"></id>
+        <result property="articleUserId" column="article_user_id" jdbcType="INTEGER"></result>
+        <result property="articleTitle" column="article_title" jdbcType="VARCHAR"></result>
+        <result property="articleContent" column="article_content" jdbcType="VARCHAR"></result>
+        <result property="articleViewCount" column="article_view_count" jdbcType="INTEGER"></result>
+        <result property="articleCommentCount" column="article_comment_count" jdbcType="INTEGER"></result>
+        <result property="articleLikeCount" column="article_like_count" jdbcType="INTEGER"></result>
+        <result property="articleIsComment" column="article_is_comment" jdbcType="INTEGER"></result>
+        <result property="articleStatus" column="article_status" jdbcType="INTEGER"></result>
+        <result property="articleOrder" column="article_order" jdbcType="INTEGER"></result>
+        <result property="articleUpdateTime" column="article_update_time" jdbcType="TIMESTAMP"></result>
+        <result property="articleCreateTime" column="article_create_time" jdbcType="TIMESTAMP"></result>
+        <result property="articleSummary" column="article_summary" jdbcType="VARCHAR"></result>
+
+    </resultMap>
+    <!--给数据库起了个别名-->
+    <sql id="tb">article</sql>
+    <!--给查询所有的字段起一个别名-->
+    <sql id="Base_Column_List">
+        article_id,article_user_id,article_title,article_content,article_view_count,article_comment_count,article_like_count,article_is_comment,
+        article_status,article_order,article_update_time,article_create_time,article_summary
+    </sql>
+
+    <!--useGeneratedKeys的作用是：只对insert语句生效，默认为false，如果设置为true，则表示如果插入的表以自增为主键的话，则允许JDBC支持自动生成主键，并可将自动生成的主键返回-->
+    <!--keyProperty的作用是：主键在自增的同时，添加一条数据，主键是不能用的，这时候如果我们要使用主键就要加入keyProperty来使用了，其中keyProperty的值为主键所对应的java对象-->
+    <insert id="insert" parameterType="com.tencent.entity.Article" useGeneratedKeys="true" keyProperty="articleId">
+          insert into <include refid="tb"/>(article_user_id,article_title,article_content,article_view_count,article_comment_count,article_like_count,article_is_comment,article_status,article_order,article_update_time,article_create_time,article_summary)
+          values(#{articleUserId},#{articleTitle},#{articleContent},#{articleViewCount},#{articleCommentCount},#{articleLikeCount},#{articleIsComment},#{articleStatus},#{articleOrder},#{articleUpdateTime},#{articleCreateTime},#{articleSummary})
+    </insert>
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from <include refid="tb"/> where article_id = #{articleId}
+    </delete>
+
+    <update id="update" parameterType="com.tencent.entity.Article">
+        update <include refid="tb"/>
+        <set>
+          <if test="articleUserId != null">article_user_id = #{articleUserId},</if>
+            <if test="articleTitle != null">article_title = #{articleTitle},</if>
+            <if test="articleContent != null">article_content = #{articleContent},</if>
+            <if test="articleViewCount != null">article_view_count = #{articleViewCount},</if>
+            <if test="articleCommentCount != null">article_comment_count = #{articleCommentCount},</if>
+            <if test="articleLikeCount != null">article_like_count = #{articleLikeCount},</if>
+            <if test="articleIsComment != null">article_is_comment = #{articleIsComment},</if>
+            <if test="articleStatus != null">article_status = #{articleStatus},</if>
+            <if test="articleOrder != null">article_order = #{articleOrder},</if>
+            <if test="articleUpdateTime != null">article_update_time = #{articleUpdateTime},</if>
+            <if test="articleCreateTime != null">article_create_time = #{articleCreateTime},</if>
+            <if test="articleSummary != null">article_summary = #{articleSummary}</if>
+            where article_id = #{articleId}
+        </set>
+    </update>
+
+    <!--执行查询所有的操作，但是在这里还没有写分类和标签的功能，所以暂且不写-->
+    <select id="findAll" resultMap="BaseResultMap">
+        select article.* from article
+        <where>
+            <if test="status!=null">
+                article.article_status = #{status} and
+            </if>
+            <if test="keywords!=null">
+                article.article_title like concat(concat('%',#{keywords}),'%') and
+            </if>
+            <if test="userId!=null">
+                article.article_user_id = #{userId} and
+            </if>
+            <if test="categoryId!=null">
+                article.article_id in (select article_category_ref.article_id from article_category_ref
+                where article_category_ref.category_id = #{categoryId}) and
+            </if>
+            <if test="tagId!=null">
+                article.article_id in (select article_tag_ref.article_id from article_tag_ref where article_tag_ref.tag_id = #{tagId}) and
+            </if>
+            1 = 1
+        </where>
+        order by article.article_order desc,article.article_id desc
+    </select>
+
+    <!--文章归档-->
+    <select id="listAllNotWithContent" resultType="com.tencent.entity.Article">
+        select article_id,article_user_id,article_title,article_create_time from <include refid="tb"/>
+        where article_status = 1 order by article_id desc
+    </select>
+
+    <select id="getArticleUserId" parameterType="INTEGER" resultType="INTEGER">
+        select article_user_id from <include refid="tb"/> where article_id = #{articleId}
+    </select>
+
+    <!--获取文章的总数-->
+    <select id="countArticle" resultType="Integer">
+        select count(*) from <include refid="tb"/> where article_status = 1
+    </select>
+
+    <!--获取留言总数-->
+    <select id="countArticleComment" resultType="Integer">
+        select sum(article_comment_count) from <include refid="tb"/> where article_status = 1
+    </select>
+
+    <!--统计访问量的总数-->
+    <select id="countArticleView" resultType="Integer">
+        select sum(article_view_count) from <include refid="tb"/> where article_status = 1
+    </select>
+
+    <!--更新点赞数量-->
+
+    <update id="updateLikeCount" parameterType="INTEGER">
+        update <include refid="tb"/>
+        <set>
+            <if test="articleLikeCount != null">article_like_count = #{articleLikeCount} </if>
+            where article_id = #{articleId}
+        </set>
+    </update>
+
+    <!--获取所有文章总数-->
+    <select id="listArticle" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> where article_status = 1 order by article_status asc,article_order desc,article_id desc
+    </select>
+
+    <!--根据用户的status和id来查询文章信息-->
+    <select id="getArticleByStatusAndId" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        <where>
+            <if test="status != null">article_status = #{status} and </if> article_id = #{id}
+        </where>
+    </select>
+
+    <!--分页操作,由于在dao层，把要传入的参数用@Param代替了，这里就不用写传入参数的类型了，直接使用就行-->
+    <select id="pageArticle" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        <where>
+            <if test="status != null">
+                article_status = #{status}
+            </if>
+        </where>
+        order by article_status asc,article_order desc,article_id desc limit #{pageIndex},#{pageSize}
+    </select>
+
+    <!--获得访问量多的文章-->
+    <select id="listArticleByViewCount" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> where article_status = 1 order by article_view_count desc,article_order desc,article_id desc limit #{limit}
+    </select>
+
+    <!--获得上一篇文章,其中&lt;表示小于号-->
+    <select id="getPreArticle" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        <where>
+            article_id &lt;  #{id} and article_status = 1
+        </where>
+        order by article_id desc limit 1
+    </select>
+
+    <!--获取下一篇文章-->
+    <select id="getAfterArticle" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        <where>
+            article_id > #{id} and article_status = 1
+        </where>
+        order by article_id limit 1
+    </select>
+
+    <!--获取随机文章-->
+    <select id="listRandomArticle" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List" /> from <include refid="tb"/>
+        where article_status = 1 order by RAND() limit #{limit}
+    </select>
+
+    <!--获取热评文章-->
+    <select id="listArticleByCommentCount" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where article_status = 1
+        order by article_comment_count desc,article_order desc,article_id desc limit #{limit}
+    </select>
+
+    <!--更新文章评论数,这里需要另外一张表-->
+    <update id="updateCommentCount" parameterType="Integer">
+        update <include refid="tb"/> set article_comment_count = (
+            select count(*) from comment where article.article_id = comment.comment_article_id
+        )
+        where article_id = #{articleId}
+    </update>
+
+    <!--获得最后的更新记录-->
+    <select id="getLastUpdateArticle" resultType="com.tencent.entity.Article">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where article_status = 1 and article_update_time = (
+          select max(article_update_time) from article
+        )
+    </select>
+
+    <!--获取用户的文章数-->
+    <select id="countArticleByUser" parameterType="Integer" resultType="Integer">
+        select count(*) from <include refid="tb"/> where article_user_id = #{id} and article_status = 1
+    </select>
+
+    <!--获取最新文章-->
+    <select id="listArticleByLimit" parameterType="Integer" resultType="com.tencent.entity.Article">
+        select article_id,article_user_id,article_title,article_view_count,article_comment_count,article_like_count,
+        article_create_time,article_update_time,article_is_comment,article_status,article_order from
+        <include refid="tb"/>
+        order by article_id desc limit #{limit}
+    </select>
+
+    <!--批量删除文章-->
+    <delete id="deleteBatch" parameterType="list">
+        delete from <include refid="tb"/>
+        <if test="ids != null">
+            where article_id in
+            <foreach collection="ids" open="(" close=")" separator="," item="id">
+                #{id}
+            </foreach>
+        </if>
+    </delete>
+
+    <!--还有两个接口中的方法没有实现，他们的实体类还没有写-->
+    <select id="findArticleByCategoryId" resultType="com.tencent.entity.Article">
+          select
+          article.article_id,article.article_user_id,article.article_title,
+          article.article_view_count,article.article_comment_count,
+          article.article_like_count,article.article_is_comment,article.article_status,
+          article.article_order,article.article_update_time,article.article_create_time,
+          article.article_summary
+          from
+          article,article_category_ref
+          where article.article_status = 1 and article.article_id = article_category_ref.article_id and
+          article_category_ref.category_id = #{categoryId}
+          limit #{limit}
+    </select>
+
+<!--
+    还有两个接口中的方法没有实现，他们的实体类还没有写
+-->
+    <select id="findArticleByCategoryIds" resultType="com.tencent.entity.Article">
+          select
+          article.article_id,article.article_user_id,article.article_title,
+          article.article_view_count,article.article_comment_count,
+          article.article_like_count,article.article_is_comment,article.article_status,
+          article.article_order,article.article_update_time,article.article_create_time,
+          article.article_summary
+          from
+          article,article_category_ref
+          <where>
+              article.article_status = 1 and article.article_id = article_category_ref.article_id and
+              article_category_ref.category_id
+              <if test="categoryIds != null">
+                  in
+                  <foreach collection="categoryIds" open="(" close=")" separator="," item="id">
+                      #{id}
+                  </foreach>
+              </if>
+          </where>
+          limit #{limit}
+
+    </select>
+</mapper>

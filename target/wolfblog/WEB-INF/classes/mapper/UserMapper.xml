@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.IUserDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.User">
+        <!--注意这里由于是枚举类型，所以jdbcType只能是大写，不能写成小写-->
+        <id property="userId" column="user_id" jdbcType="INTEGER"></id>
+        <result property="userName" column="user_name" jdbcType="VARCHAR"></result>
+        <result property="userPass" column="user_pass" jdbcType="VARCHAR"></result>
+        <result property="userNickName" column="user_nickname" jdbcType="VARCHAR"></result>
+        <result property="userEmail" column="user_email" jdbcType="VARCHAR"></result>
+        <result property="userUrl" column="user_url" jdbcType="VARCHAR"></result>
+        <result property="userAvatar" column="user_avatar" jdbcType="VARCHAR"></result>
+        <result property="userLastLoginIp" column="user_last_login_ip" jdbcType="VARCHAR"></result>
+        <result property="userRegisterTime" column="user_register_time" jdbcType="TIMESTAMP"></result>
+        <result property="userLastLoginTime" column="user_last_login_time" jdbcType="TIMESTAMP"></result>
+        <result property="userStatus" column="user_status" jdbcType="INTEGER"></result>
+        <result property="userSalt" column="user_salt" jdbcType="VARCHAR"></result>
+    </resultMap>
+    <sql id="tb">user</sql>
+    <sql id="Base_Column_List">
+        user_id,user_name,user_pass,user_nickname,user_email,user_url,user_avatar,
+        user_last_login_ip,user_last_login_time,user_register_time,user_status,user_salt
+    </sql>
+    
+    <insert id="insert" parameterType="com.tencent.entity.User">
+        insert into <include refid="tb"/>(user_id,user_name,user_pass,user_nickname,user_email,user_url,user_avatar,
+        user_last_login_ip,user_last_login_time,user_register_time,user_status,user_salt) values(#{userId},#{userName},#{userPass},
+        #{userNickName},#{userEmail},#{userUrl},#{userAvatar},#{userLastLoginIp},#{userLastLoginTime},#{userRegisterTime},#{userStatus},#{userSalt})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.entity.User">
+        update <include refid="tb"/>
+        <set>
+            <if test="userName!=null">user_name=#{userName},</if>
+            <if test="userPass!=null">user_pass=#{userPass},</if>
+            <if test="userNickName!=null">user_nickname=#{userNickName},</if>
+            <if test="userEmail!=null">user_email=#{userEmail},</if>
+            <if test="userUrl!=null">user_url=#{userUrl},</if>
+            <if test="userAvatar!=null">user_avatar=#{userAvatar},</if>
+            <if test="userLastLoginIp!=null">user_last_login_ip=#{userLastLoginIp},</if>
+            <if test="userLastLoginTime">user_last_login_time=#{userLastLoginTime},</if>
+            <if test="userRegisterTime">user_register_time=#{userRegisterTime},</if>
+            <if test="userStatus!=null">user_status=#{userStatus},</if>
+            <if test="userSalt!=null">user_salt=#{userSalt}</if>
+        </set>
+        where user_id=#{userId}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from <include refid="tb"/> where user_id = #{userId}
+    </delete>
+
+    <select id="getUserById" parameterType="Integer" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where user_id = #{userId} limit 1
+    </select>
+
+    <select id="getUserByName" parameterType="String" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where user_name = #{userName} limit 1
+    </select>
+
+    <select id="getUserByNameOrEmail" parameterType="String" resultType="com.tencent.entity.User">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where user_name = #{value} and user_status > 0 limit 1
+    </select>
+
+    <select id="getUserByEmail" parameterType="String" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+         <where>
+             user_email = #{userEmail}
+         </where>
+          limit 1
+    </select>
+
+    <select id="listUser" resultType="com.tencent.entity.User">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> order by user_status asc
+    </select>
+</mapper>

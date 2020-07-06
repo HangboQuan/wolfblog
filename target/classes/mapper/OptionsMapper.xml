@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.IOptionsDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.Options">
+        <id property="optionId" column="option_id" jdbcType="INTEGER"></id>
+        <result property="optionSiteTitle" column="option_site_title" jdbcType="VARCHAR"></result>
+        <result property="optionSiteDescrption" column="option_site_descrption" jdbcType="VARCHAR"></result>
+        <result property="optionMetaDescrption" column="option_meta_descrption" jdbcType="VARCHAR"></result>
+        <result property="optionMetaKeyword" column="option_meta_keyword" jdbcType="VARCHAR"></result>
+        <result property="optionAboutsiteAvatar" column="option_aboutsite_avatar" jdbcType="VARCHAR"></result>
+        <result property="optionAboutsiteTitle" column="option_aboutsite_title" jdbcType="VARCHAR"></result>
+        <result property="optionAboutsiteContent" column="option_aboutsite_content" jdbcType="VARCHAR"></result>
+        <result property="optionAboutsiteWechat" column="option_aboutsite_wechat" jdbcType="VARCHAR"></result>
+        <result property="optionAboutsiteQq" column="option_aboutsite_qq" jdbcType="VARCHAR"></result>
+        <result property="optionAboutsiteGithub" column="option_aboutsite_github" jdbcType="VARCHAR"></result>
+        <result property="optionTongji" column="option_tongji" jdbcType="VARCHAR"></result>
+        <result property="optionStatus" column="option_status" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="tb">options</sql>
+
+    <sql id="Base_Column_List">
+        option_id,option_site_title,option_site_descrption,option_meta_descrption,option_meta_keyword,option_aboutsite_avatar
+        option_aboutsite_title,option_aboutsite_content,option_aboutsite_wechat,option_aboutsite_qq,option_aboutsite_github,
+        option_tongji,option_status
+    </sql>
+
+    <insert id="insert" parameterType="com.tencent.entity.Options">
+        insert into <include refid="tb"/> (option_site_title,option_site_descrption,option_meta_descrption,option_meta_keyword,option_aboutsite_avatar
+        option_aboutsite_title,option_aboutsite_content,option_aboutsite_wechat,option_aboutsite_qq,option_aboutsite_github,
+        option_tongji,option_status)values (#{optionSiteTitle},#{optionSiteDescrption},#{optionMetaDescrption},#{optionMetaKeyword},#{optionAboutsiteAvatar},#{optionAboutsiteTitle},#{optionAboutsiteContent},#{optionAboutsiteWechat},
+        #{optionAboutsiteQq},#{optionAboutsiteGithub},#{optionTongji},#{optionStatus})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.entity.Options">
+        update <include refid="tb"/>
+        <set>
+            <if test="optionSiteTitle!=null">option_site_title=#{optionSiteTitle},</if>
+            <if test="optionSiteDescrption!=null">option_site_descrption=#{optionSiteDescrption},</if>
+            <if test="optionMetaDescrption!=null">option_meta_descrption=#{optionMetaDescrption},</if>
+            <if test="optionMetaKeyword!=null">options_meta_keyword=#{optionMetaKeyword},</if>
+            <if test="optionAboutsiteAvatar!=null">option_aboutsite_avatar=#{optionAboutsiteAvatar},</if>
+            <if test="optionAboutsiteTitle!=null">option_aboutsite_title=#{optionAboutsiteTitle},</if>
+            <if test="optionAboutsiteContent!=null">option_aboutsite_content=#{optionAboutsiteContent},</if>
+            <if test="optionAboutsiteWechat!=null">option_aboutsite_wechat=#{optionAboutsiteWechat},</if>
+            <if test="optionAboutsiteQq!=null">option_aboutsite_qq=#{optionAboutsiteQq},</if>
+            <if test="optionAboutsiteGithub!=null">option_aboutsite_github=#{optionAboutsiteGithub},</if>
+            <if test="optionTongji!=null">option_tongji=#{optionTongji},</if>
+            <if test="optionStatus!=null">option_status=#{optionStatus},</if>
+        </set>
+        where option_id = #{optionId}
+    </update>
+    
+    <delete id="deleteById" parameterType="Integer">
+        delete from <include refid="tb"/> where option_id = #{optionId}
+    </delete>
+    
+    <select id="getOptionsById" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> where option_id = #{optionId}
+    </select>
+    
+    <select id="getOptions" resultType="com.tencent.entity.Options">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> limit 1
+    </select>
+</mapper>

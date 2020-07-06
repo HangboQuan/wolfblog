@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" build-on-make="true" name="wolfblog:war2">
+    <output-path>$PROJECT_DIR$/out/artifacts/wolfblog_war2</output-path>
+    <root id="archive" name="wolfblog_war.war">
+      <element id="artifact" artifact-name="wolfblog:war exploded" />
+    </root>
+  </artifact>
+</component>

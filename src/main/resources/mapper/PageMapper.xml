@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.IPageDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.Page">
+        <id property="pageId" column="page_id" jdbcType="INTEGER"></id>
+        <result property="pageKey" column="page_keu" jdbcType="VARCHAR"></result>
+        <result property="pageTitle" column="page_title" jdbcType="VARCHAR"></result>
+        <result property="pageContent" column="page_content" jdbcType="VARCHAR"></result>
+        <result property="pageCreateTime" column="page_create_time" jdbcType="TIMESTAMP"></result>
+        <result property="pageUpdateTime" column="page_update_time" jdbcType="TIMESTAMP"></result>
+        <result property="pageViewCount" column="page_view_count" jdbcType="INTEGER"></result>
+        <result property="pageCommentCount" column="page_comment_count" jdbcType="INTEGER"></result>
+        <result property="pageStatus" column="page_status" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="tb">page</sql>
+
+    <sql id="Base_Column_List">
+        page_id,page_key,page_title,page_content,page_create_time,page_update_time,
+        page_view_count,page_comment_count,page_status
+    </sql>
+
+    <insert id="insert" parameterType="com.tencent.entity.Page">
+        insert into <include refid="tb"/> (page_key,page_title,page_content,page_create_time,page_update_time,
+        page_view_count,page_comment_count,page_status) values(#{pageKey},#{pageTitle},#{pageContent},#{pageCreateTime},#{pageUpdateTime},
+        #{pageViewCount},#{pageCommentCount},#{pageStatus})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.entity.Page">
+        update <include refid="tb"/>
+        <set>
+            <if test="pageKey!=null">page_key=#{pageKey},</if>
+            <if test="pageTitle!=null">page_title=#{pageTitle},</if>
+            <if test="pageContent!=null">page_content=#{pageContent},</if>
+            <if test="pageCreateTime!=null">page_create_time=#{pageCreateTime},</if>
+            <if test="pageUpdateTime!=null">page_update_time=#{pageUpdateTime},</if>
+            <if test="pageViewCount!=null">page_view_count=#{pageViewCount},</if>
+            <if test="pageCommentCount!=null">page_comment_count=#{pageCommentCount},</if>
+            <if test="pageStatus!=null">page_status=#{pageStatus}</if>
+        </set>
+        where page_id = #{pageId}
+    </update>
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from <include refid="tb"/> where page_id = #{pageId}
+    </delete>
+
+    <select id="getPageById" parameterType="Integer" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> where page_id = #{pageId}
+    </select>
+
+    <select id="getPageByKey" parameterType="com.tencent.entity.Page" resultType="com.tencent.entity.Page">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        <where>
+            <if test="status!=null">page_status = #{status} and </if> page_key = #{key}
+        </where>
+
+    </select>
+
+    <!--获得页面列表-->
+    <select id="listPage" parameterType="com.tencent.entity.Page" resultType="com.tencent.entity.Page">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        <where>
+            <if test="status!=null">page_status = #{status}</if>
+        </where>
+    </select>
+</mapper>

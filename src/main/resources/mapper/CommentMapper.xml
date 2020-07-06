@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.ICommentDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.Comment">
+        <id property="commentId" column="comment_id" jdbcType="INTEGER"></id>
+        <result property="commentPid" column="comment_pid" jdbcType="INTEGER"></result>
+        <result property="commentPname" column="comment_pname" jdbcType="VARCHAR"></result>
+        <result property="commentArticleId" column="comment_article_id" jdbcType="INTEGER"></result>
+        <result property="commentAuthorName" column="comment_author_name" jdbcType="VARCHAR"></result>
+        <result property="commentAuthorEmail" column="comment_author_email" jdbcType="VARCHAR"></result>
+        <result property="commentAuthorUrl" column="comment_author_url" jdbcType="VARCHAR"></result>
+        <result property="commentAuthorAvatar" column="comment_author_avatar" jdbcType="VARCHAR"></result>
+        <result property="commentContent" column="comment_content" jdbcType="VARCHAR"></result>
+        <result property="commentAgent" column="comment_agent" jdbcType="VARCHAR"></result>
+        <result property="commentIp" column="comment_ip" jdbcType="VARCHAR"></result>
+        <!--区别timestamp和datetime：timestamp与时区有关，范围小（1970-2038）,datetime和时区无关,范围大（1000-9999）-->
+        <result property="commentCreateTime" column="comment_create_time" jdbcType="TIMESTAMP"></result>
+        <result property="commentRole" column="comment_role" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="tb">comment</sql>
+
+    <sql id="Base_Column_List">
+        comment_id,comment_pid,comment_pname,comment_article_id,comment_author_name,
+        comment_author_email,comment_author_url,comment_author_avatar,comment_content,comment_agent,
+        comment_ip,comment_create_time,comment_role
+    </sql>
+
+    <!--useGeneratedKeys的作用只针对于insert，默认为false，当为true的时候，如果插入的表以自增列为主键，
+    则运行JDBC支持自动生成主键，并可将自动生成的主键返回，其中keyProperty里面放的就是对应主键的对象-->
+    <insert id="insert" parameterType="com.tencent.entity.Comment" useGeneratedKeys="true" keyProperty="commentId">
+        insert into <include refid="tb"/>
+        (comment_pid,comment_pname,comment_article_id,comment_author_name,comment_author_email,
+        comment_author_url,comment_author_avatar,comment_content,comment_agent,comment_ip,comment_create_time,comment_role)
+        values(#{commentPid},#{commentPname},#{commentArticleId},#{commentAuthorName},#{commentAuthorEmail},
+        #{commentAuthorUrl},#{commentAuthorAvatar},#{commentContent},#{commentAgent},#{commentIp},
+        #{commentCreateTime},#{commentRole})
+    </insert>
+
+
+    <update id="update" parameterType="com.tencent.entity.Comment">
+        update <include refid="tb"/>
+        <set>
+            <if test="commentPid != null">comment_pid=#{commentPid},</if>
+            <if test="commentPname != null">comment_pname=#{commentPname},</if>
+            <if test="commentArticleId != null">comment_article_id=#{commentArticleId},</if>
+            <if test="commentAuthorName != null">comment_author_name=#{commentAuthorName},</if>
+            <if test="commentAuthorEmail != null">comment_author_email=#{commentAuthorEmail},</if>
+            <if test="commentAuthorUrl != null">comment_author_url=#{commentAuthorUrl},</if>
+            <if test="commentAuthorAvatar != null">comment_author_avatar=#{commentAuthorAvatar},</if>
+            <if test="commentContent != null">comment_content=#{commentContent},</if>
+            <if test="commentAgent != null">comment_agent=#{commentAgent},</if>
+            <if test="commentIp != null">comment_ip=#{commentIp},</if>
+            <if test="commentCreateTime != null">comment_create_time=#{commentCreateTime},</if>
+            <if test="commentRole != null">comment_role=#{commentRole}</if>
+        </set>
+        <where>
+            comment_id = #{commentId}
+        </where>
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from <include refid="tb"/>
+        where comment_id = #{commentId}
+    </delete>
+
+    <select id="getCommentById" parameterType="Integer" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where comment_id = #{commentId}
+    </select>
+
+    <select id="listCommentByArticleId" parameterType="Integer" resultMap="BaseResultMap">
+          select <include refid="Base_Column_List"/> from <include refid="tb"/>
+          where comment_article_id=#{id} order by comment_id asc
+    </select>
+
+    <select id="listComment" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        order by comment_id desc
+    </select>
+
+    <select id="countComment" resultType="Integer">
+        select count(*) from <include refid="tb"/>
+    </select>
+
+    <select id="listRecentComment" resultMap="BaseResultMap" parameterType="Integer">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where comment_role = 0 order by comment_create_time desc limit #{limit}
+    </select>
+    
+    <select id="listChildComment" resultMap="BaseResultMap" parameterType="Integer">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where comment_pid = #{id}
+    </select>
+</mapper>

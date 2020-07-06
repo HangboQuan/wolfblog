@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.IArticleCategoryRefDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.ArticleCategoryRef">
+        <result property="articleId" column="article_id" jdbcType="INTEGER"/>
+        <result property="categoryId" column="category_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="tb">article_category_ref</sql>
+
+    <insert id="insert" parameterType="Integer">
+        insert into <include refid="tb"/>(article_id,category_id) values(#{articleId},#{categoryId})
+    </insert>
+
+    <delete id="deleteByCategoryId" parameterType="Integer">
+        delete from <include refid="tb"/> where category_id = #{value}
+    </delete>
+
+    <delete id="deleteByArticleId" parameterType="Integer">
+        delete from <include refid="tb"/> where article_id = #{value}
+    </delete>
+
+    <!--根据分类id统计文章数-->
+    <select id="countArticleByCategoryId" parameterType="Integer" resultType="Integer">
+        select count(*) from <include refid="tb"/> where category_id = #{value}
+    </select>
+
+    <select id="selectCategoryByArticleId" resultType="Integer">
+        select category_id from <include refid="tb"/> where article_id = #{value}
+    </select>
+
+    <select id="selectArticleIdByCategoryId" resultType="Integer">
+        select article_id from <include refid="tb"/> where category_id = #{value}
+    </select>
+
+
+    <select id="listCategoryByArticleId" parameterType="Integer" resultType="com.tencent.entity.Category">
+        select category.category_id,category.category_pid,category.category_name from
+        category,article_category_ref where article_category_ref.article_id = #{value}
+        and  article_category_ref.category_id = category.category_id order by category.category_pid asc
+    </select>
+</mapper>

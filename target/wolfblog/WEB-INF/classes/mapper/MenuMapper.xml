@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.IMenuDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.Menu">
+        <id property="menuId" column="menu_id" jdbcType="INTEGER"></id>
+        <result property="menuName" column="menu_name" jdbcType="VARCHAR"></result>
+        <result property="menuUrl" column="menu_url" jdbcType="VARCHAR"></result>
+        <result property="menuLevel" column="menu_level" jdbcType="INTEGER"></result>
+        <result property="menuIcon" column="menu_icon" jdbcType="VARCHAR"></result>
+        <result property="menuOrder" column="menu_order" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="tb">menu</sql>
+
+    <sql id="Base_Column_List">
+        menu_id,menu_name,menu_url,menu_level,menu_icon,menu_order
+    </sql>
+
+    <insert id="insert" parameterType="com.tencent.entity.Menu" useGeneratedKeys="true" keyProperty="menu_id">
+        insert into <include refid="tb"/> (menu_name,menu_url,menu_level,menu_icon,menu_order)
+        values(#{menuName},#{menuUrl},#{menuLevel},#{menuIcon},#{menuOrder})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.entity.Menu">
+        update <include refid="tb"/>
+        <set>
+            <if test="menuName!=null">menu_name = #{menuName},</if>
+            <if test="menuUrl!=null">menu_url = #{menuUrl},</if>
+            <if test="menuLevel!=null">menu_level = #{menuLevel},</if>
+            <if test="menuIcon!=null">menu_icon = #{menuIcon},</if>
+            <if test="menuOrder!=null">menu_order = #{menuOrder},</if>
+        </set>
+        where menu_id = #{menuId}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from <include refid="tb"/> where menu_id = #{menuId}
+    </delete>
+
+    <select id="getMenuById" resultMap="BaseResultMap" parameterType="Integer">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> where menu_id = #{menuId}
+    </select>
+
+    <select id="listMenu" resultType="com.tencent.entity.Menu">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/> order by menu_order desc,menu_id asc
+    </select>
+</mapper>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.IArticleTagRefDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.ArticleTagRef">
+        <id property="tagId" column="tag_id" jdbcType="INTEGER"></id>
+        <result property="articleId" column="article_id" jdbcType="INTEGER"></result>
+    </resultMap>
+
+    <sql id="tb">article_tag_ref</sql>
+
+    <insert id="insert" parameterType="Integer">
+        insert into <include refid="tb"/> (tag_id,article_id) values(#{tagId},#{articleId})
+    </insert>
+
+    <delete id="deleteByTagId" parameterType="Integer">
+        delete from <include refid="tb"/> where tag_id = #{tagId}
+    </delete>
+
+    <delete id="deleteByArticleId" parameterType="Integer">
+        delete from <include refid="tb"/> where article_id = #{articleId}
+    </delete>
+
+    <select id="countArticleByTagId" parameterType="Integer" resultType="Integer">
+        select count(*) from <include refid="tb"/> where tag_id = #{tagId}
+    </select>
+
+    <select id="listTagByArticleId" parameterType="Integer" resultType="com.tencent.entity.Tag">
+        select tag.* from tag,article_tag_ref where article_tag_ref.article_id = #{value} and article_tag_ref.tag_id = tag.tag_id
+    </select>
+</mapper>

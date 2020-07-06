@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tencent.dao.ICategoryDao">
+    <resultMap id="BaseResultMap" type="com.tencent.entity.Category">
+        <id property="categoryId" column="category_id" jdbcType="INTEGER"/>
+        <result property="categoryPid" column="category_pid" jdbcType="INTEGER"/>
+        <result property="categoryName" column="category_name" jdbcType="VARCHAR"/>
+        <result property="categoryDescription" column="category_description" jdbcType="VARCHAR"/>
+        <result property="categoryOrder" column="category_order" jdbcType="INTEGER"/>
+        <result property="categoryIcon" column="category_icon" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="tb">category</sql>
+
+    <sql id="Base_Column_List">
+        category_id,category_pid,category_name,category_description,category_order,category_icon
+    </sql>
+
+    <insert id="insert" parameterType="com.tencent.entity.Category">
+        insert into <include refid="tb"/>(category_pid,category_name,category_description,category_order,category_icon)
+        values(#{categoryPid},#{categoryName},#{categoryDescription},#{categoryOrder},#{categoryIcon})
+    </insert>
+
+    <update id="update" parameterType="com.tencent.entity.Category">
+        update <include refid="tb"/>
+        <set>
+            <if test="categoryPid != null">category_pid = #{categoryPid},</if>
+            <if test="categoryName != null">category_name = #{categoryName},</if>
+            <if test="categoryDescription != null">category_description = #{categoryDescription},</if>
+            <if test="categoryOrder != null">category_order = #{categoryOrder},</if>
+            <if test="categoryIcon != null">category_icon = #{categoryIcon}</if>
+        </set>
+         where category_id = #{categoryId}
+    </update>
+
+    <delete id="delete" parameterType="Integer">
+        delete from <include refid="tb"/>
+        where category_id = #{categoryId}
+    </delete>
+
+    <select id="getCategoryById" parameterType="Integer" resultType="com.tencent.entity.Category">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where category_id = #{categoryId}
+    </select>
+
+    <select id="countCategory" resultType="Integer">
+        select count(*) from <include refid="tb"/>
+    </select>
+
+    <select id="listCategory" resultType="com.tencent.entity.Category">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        order by category_order desc,category_id asc
+    </select>
+
+    <select id="findChildCategory" resultType="com.tencent.entity.Category">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where category_pid = #{id}
+    </select>
+
+    <select id="getCategoryByName" resultType="com.tencent.entity.Category">
+        select <include refid="Base_Column_List"/> from <include refid="tb"/>
+        where category_name = #{value} limit 1
+    </select>
+</mapper>
