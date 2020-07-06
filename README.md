@@ -12,7 +12,7 @@
   项目预览地址：http://hbquan.top(腾云博客)
   ## 二.项目前台和后台部分功能预览
   ### 1.首页效果展示:
-  ![image]:(https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706114610.png)
+  ! [image]:(https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706114610.png)
   
   
   
