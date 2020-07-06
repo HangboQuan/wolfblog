@@ -9,7 +9,7 @@
     3.点赞功能由Redis来实现,将点赞数率先存入redis,然后再更新到mysql中;
     4.异步处理,利用生产者消费者模式将用户的点赞信息异步通知给用户;
     
-  项目预览地址：http://hbquan.top(腾云博客)
+  项目预览地址：http://www.hbquan.top(腾云博客)
   ## 二.项目前台和后台部分功能预览
   ### 1.首页效果展示:
   ![image](https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706114610.png)
