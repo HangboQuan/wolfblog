@@ -13,6 +13,17 @@
   ## 二.项目前台和后台部分功能预览
   ### 1.首页效果展示:
   ![image](https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706114610.png)
+  ### 2.文章详情页展示:
+  ![image](https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706114741.png)
+  ### 3.后台文章管理展示:
+  ![image](https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706114923.png)
+  ### 4.后台写文章展示:
+  ![image](https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706115018.png)
+  ### 5.后台评论管理展示:
+  ![image](https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706115103.png)
+  ### 6.后台用户管理展示:
+  ![image](https://github.com/ProgramMonkeyquan/wolfblog/blob/master/img/QQ_20200706115143.png)
+  
   
   
   
