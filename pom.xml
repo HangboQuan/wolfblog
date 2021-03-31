@@ -176,7 +176,7 @@
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
-      <version>28.0-jre</version>
+      <version>29.0-jre</version>
     </dependency>
 
     <!--是mybatis中的用来实现分页功能的-->
